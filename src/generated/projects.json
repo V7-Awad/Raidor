@@ -1,0 +1,26 @@
+[
+  {
+    "title": "CTF Field Notes",
+    "summary": "A searchable notebook of practical techniques, payload behavior, and challenge write-ups.",
+    "stack": [
+      "Next.js",
+      "TypeScript",
+      "MDX"
+    ],
+    "links": [],
+    "status": "ongoing",
+    "cover": ""
+  },
+  {
+    "title": "Linux Lab Toolkit",
+    "summary": "Small scripts and checklists for repeatable Linux host enumeration.",
+    "stack": [
+      "Python",
+      "Bash",
+      "Linux"
+    ],
+    "links": [],
+    "status": "in progress",
+    "cover": ""
+  }
+]

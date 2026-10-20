@@ -1,0 +1,4 @@
+import Link from "next/link";
+import projects from "@/generated/projects.json";
+export const metadata = { title: "Projects", description: "Selected security and software projects." };
+export default function Projects() { return <div className="page-shell"><h1>Projects</h1><p className="page-lede">Tools and experiments built along the way.</p><div className="project-list">{projects.map((project) => <article className="project" key={project.title}><h2>{project.title}</h2><p>{project.summary}</p><div className="project-stack">{project.stack.map((item) => <span key={item}>{item}</span>)}<span>· {project.status}</span></div>{project.links.length > 0 && <nav className="link-list" aria-label={`${project.title} links`}>{project.links.map((url) => <Link key={url} href={url} target="_blank" rel="noopener noreferrer">Project link ↗</Link>)}</nav>}</article>)}</div></div>; }

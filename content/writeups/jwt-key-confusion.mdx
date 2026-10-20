@@ -1,0 +1,30 @@
+---
+title: "JWT key confusion in a small API"
+slug: "jwt-key-confusion"
+date: 2026-08-14
+summary: "How an algorithm mismatch turned a harmless token check into account access."
+tags: ["web", "jwt", "api"]
+category: "lab"
+difficulty: "medium"
+draft: false
+---
+
+## Overview
+
+A compact lab about reading the verification path before reaching for a payload.
+
+<Callout type="note">Always pin the accepted signing algorithm in server configuration.</Callout>
+
+```ts
+const verified = verify(token, publicKey, { algorithms: ["RS256"] });
+```
+
+The useful clue was the branch that selected the verification key.
+
+## Investigation
+
+![The watcher identity artwork](/brand/identity-original.jpg)
+
+## Takeaways
+
+Pin allowed algorithms and test rejection paths as well as valid tokens.

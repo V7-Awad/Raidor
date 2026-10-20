@@ -1,0 +1,106 @@
+[
+  {
+    "title": "JWT key confusion in a small API",
+    "slug": "jwt-key-confusion",
+    "date": "2026-08-14",
+    "summary": "How an algorithm mismatch turned a harmless token check into account access.",
+    "tags": [
+      "web",
+      "jwt",
+      "api"
+    ],
+    "category": "lab",
+    "difficulty": "medium",
+    "draft": false,
+    "body": [
+      "## Overview",
+      "A compact lab about reading the verification path before reaching for a payload.",
+      "<Callout type=\"note\">Always pin the accepted signing algorithm in server configuration.</Callout>",
+      "```ts\nconst verified = verify(token, publicKey, { algorithms: [\"RS256\"] });\n```",
+      "The useful clue was the branch that selected the verification key.",
+      "## Investigation",
+      "![The watcher identity artwork](/brand/identity-original.jpg)",
+      "## Takeaways",
+      "Pin allowed algorithms and test rejection paths as well as valid tokens."
+    ],
+    "headings": [
+      {
+        "title": "Overview",
+        "id": "overview"
+      },
+      {
+        "title": "Investigation",
+        "id": "investigation"
+      },
+      {
+        "title": "Takeaways",
+        "id": "takeaways"
+      }
+    ],
+    "wordCount": 57
+  },
+  {
+    "title": "Cache me if you can",
+    "slug": "cache-me-if-you-can",
+    "date": "2026-07-29",
+    "summary": "A cache key that forgot the Host header made the response reusable in the wrong place.",
+    "tags": [
+      "web",
+      "cache",
+      "ctf"
+    ],
+    "category": "ctf",
+    "event": "Night Shift CTF",
+    "difficulty": "easy",
+    "draft": false,
+    "body": [
+      "## Overview",
+      "This challenge was a reminder that caches have their own idea of identity.",
+      "I compared requests through the proxy and saw that a response generated for one host could be replayed for another.",
+      "## Takeaways",
+      "Keep cache keys aligned with every input that changes the response."
+    ],
+    "headings": [
+      {
+        "title": "Overview",
+        "id": "overview"
+      },
+      {
+        "title": "Takeaways",
+        "id": "takeaways"
+      }
+    ],
+    "wordCount": 46
+  },
+  {
+    "title": "Notes on Linux capabilities",
+    "slug": "notes-on-linux-capabilities",
+    "date": "2026-06-11",
+    "summary": "A field checklist for understanding what a process can do beyond its UID.",
+    "tags": [
+      "linux",
+      "privilege-escalation",
+      "notes"
+    ],
+    "category": "note",
+    "draft": false,
+    "body": [
+      "## Overview",
+      "Capabilities split traditional root privileges into smaller permissions. During an assessment, inventory both file capabilities and the capabilities held by running processes.",
+      "Use `getcap` to find file capabilities, then check whether the binary can be influenced through arguments, environment, or writable paths.",
+      "## Takeaways",
+      "Trace the process context and inputs before treating a capability as exploitable."
+    ],
+    "headings": [
+      {
+        "title": "Overview",
+        "id": "overview"
+      },
+      {
+        "title": "Takeaways",
+        "id": "takeaways"
+      }
+    ],
+    "wordCount": 56
+  }
+]

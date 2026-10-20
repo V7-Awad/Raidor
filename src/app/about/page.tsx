@@ -1,0 +1,4 @@
+import Link from "next/link";
+import { siteConfig } from "@/config/site";
+export const metadata = { title: "About", description: "About Raider and this collection of security notes." };
+export default function About() { return <div className="page-shell"><h1>About</h1><p className="page-lede">I’m {siteConfig.name}, a security enthusiast documenting what I learn through CTFs, labs, and research.</p><div className="about-grid"><section><h2>What I work on</h2><p>Web application security, Linux, and practical security testing. I like clear evidence, reproducible notes, and small tools that make investigation easier.</p></section><section><h2>Find me elsewhere</h2><div className="link-list">{Object.entries(siteConfig.socials).map(([name,url]) => <a key={name} href={url} target="_blank" rel="noopener noreferrer">{name} ↗</a>)}<a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a></div></section></div><p><Link href="/contact">Contact →</Link></p></div>; }

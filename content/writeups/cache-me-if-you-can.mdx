@@ -1,0 +1,21 @@
+---
+title: "Cache me if you can"
+slug: "cache-me-if-you-can"
+date: 2026-07-29
+summary: "A cache key that forgot the Host header made the response reusable in the wrong place."
+tags: ["web", "cache", "ctf"]
+category: "ctf"
+event: "Night Shift CTF"
+difficulty: "easy"
+draft: false
+---
+
+## Overview
+
+This challenge was a reminder that caches have their own idea of identity.
+
+I compared requests through the proxy and saw that a response generated for one host could be replayed for another.
+
+## Takeaways
+
+Keep cache keys aligned with every input that changes the response.

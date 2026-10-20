@@ -1,0 +1,19 @@
+---
+title: "Notes on Linux capabilities"
+slug: "notes-on-linux-capabilities"
+date: 2026-06-11
+summary: "A field checklist for understanding what a process can do beyond its UID."
+tags: ["linux", "privilege-escalation", "notes"]
+category: "note"
+draft: false
+---
+
+## Overview
+
+Capabilities split traditional root privileges into smaller permissions. During an assessment, inventory both file capabilities and the capabilities held by running processes.
+
+Use `getcap` to find file capabilities, then check whether the binary can be influenced through arguments, environment, or writable paths.
+
+## Takeaways
+
+Trace the process context and inputs before treating a capability as exploitable.
