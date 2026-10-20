@@ -1,27 +1,302 @@
 [
   {
+    "title": "Sample Lab: Checking Record Ownership",
+    "slug": "sample-access-control-review",
+    "date": "2026-10-21",
+    "summary": "An editable local exercise for checking that an API enforces ownership on every record request.",
+    "tags": [
+      "sample",
+      "api",
+      "access-control",
+      "defense"
+    ],
+    "category": "lab",
+    "difficulty": "medium",
+    "target": "Local demo API",
+    "scope": "Two seeded test accounts",
+    "outcome": "Enforce record ownership on every operation",
+    "draft": false,
+    "body": [
+      "> **SAMPLE CONTENT — EDIT ME:** This fictional exercise uses a local demo API and two test accounts. Replace it with your own authorized lab notes before presenting it as your work.",
+      "## Scenario",
+      "The demo application stores a private note for each account. A signed-in user can open a note through a route such as `/api/notes/{noteId}`. The lab is seeded with Account A and Account B, each with one note that contains harmless test text.",
+      "The question is whether the server checks that the requested note belongs to the current account. Knowing or changing an identifier should never grant access by itself.",
+      "## Test plan",
+      "Use only the two accounts supplied by the local lab. Record the expected result before each request so the review has a clear pass/fail condition.",
+      "| Session | Note requested | Expected result |\n| --- | --- | --- |\n| Account A | A's own note | Allowed |\n| Account A | B's note | Denied without returning note data |\n| Account B | B's own note | Allowed |\n| Signed out | Any private note | Authentication required |",
+      "Repeat the ownership checks for every operation that reads or changes a note. A route that protects `GET` but forgets the same check on `PATCH` or `DELETE` still has an access-control gap.",
+      "## Sample observation",
+      "In this fictional run, the UI hid the other account's note, but the API returned it when the test account requested its seeded identifier directly. That points to a server-side authorization issue; hiding a link in the interface is not an access check.",
+      "Keep evidence minimal: the test account used, route, status code, and whether any other account's data appeared. Do not copy real personal data into a report.",
+      "## Remediation",
+      "Apply authorization where the data is loaded. A query should be scoped to both the record identifier and the authenticated account, or the handler should perform an equivalent ownership check before returning or changing anything. Return a consistent denial response when the record is missing or belongs to somebody else, according to the application's privacy requirements.",
+      "Add regression cases for the full matrix above. Include nested resources and bulk operations, since authorization can be missed when an endpoint accepts a list of IDs.",
+      "## Notes to replace",
+      "- Lab and application version:\n- Accounts and test records used:\n- Routes and methods reviewed:\n- Expected versus observed results:\n- Fix and regression checks:"
+    ],
+    "headings": [
+      {
+        "title": "Scenario",
+        "id": "scenario"
+      },
+      {
+        "title": "Test plan",
+        "id": "test-plan"
+      },
+      {
+        "title": "Sample observation",
+        "id": "sample-observation"
+      },
+      {
+        "title": "Remediation",
+        "id": "remediation"
+      },
+      {
+        "title": "Notes to replace",
+        "id": "notes-to-replace"
+      }
+    ],
+    "wordCount": 400
+  },
+  {
+    "title": "Sample Lab: Following an Untrusted Redirect",
+    "slug": "sample-redirect-lab",
+    "date": "2026-10-21",
+    "summary": "Editable practice write-up about tracing a redirect in a deliberately local demo app.",
+    "tags": [
+      "sample",
+      "web",
+      "lab"
+    ],
+    "category": "lab",
+    "difficulty": "easy",
+    "target": "Local demo app",
+    "scope": "Login redirect handling",
+    "outcome": "Allow only approved internal destinations",
+    "draft": false,
+    "body": [
+      "> **SAMPLE CONTENT — EDIT ME:** This is a fictional training example. Replace it with your own notes before presenting it as your work.",
+      "## Scenario",
+      "A local demo page accepts a `next` value after sign-in. In this sample, the value is passed straight to a redirect response, so the browser can be sent to a destination outside the demo app.",
+      "Keep the exercise on a local or intentionally vulnerable training app. Use a harmless value such as `https://example.test/finish` to observe the redirect.",
+      "## What to inspect",
+      "Follow the request in the browser network panel. Note which route reads `next`, how the server builds the `Location` response header, and whether the destination is checked against an allowlist.",
+      "For a safe default, accept only known internal paths or map short destination IDs to approved URLs. Reject malformed values instead of trying to repair them.",
+      "## Takeaways",
+      "Redirect destinations are input. Validate them at the server boundary, and add tests for absolute URLs, protocol-relative URLs, and ordinary internal paths.",
+      "**Replace this section with:** your lab setup, observations, screenshots, and remediation notes."
+    ],
+    "headings": [
+      {
+        "title": "Scenario",
+        "id": "scenario"
+      },
+      {
+        "title": "What to inspect",
+        "id": "what-to-inspect"
+      },
+      {
+        "title": "Takeaways",
+        "id": "takeaways"
+      }
+    ],
+    "wordCount": 178
+  },
+  {
+    "title": "Sample Note: Reviewing a CORS Policy",
+    "slug": "sample-cors-review",
+    "date": "2026-10-20",
+    "summary": "A practical checklist for documenting cross-origin response rules on an application you own.",
+    "tags": [
+      "sample",
+      "web",
+      "cors",
+      "defense"
+    ],
+    "category": "note",
+    "difficulty": "easy",
+    "target": "Owned demo API",
+    "scope": "Browser-facing CORS policy",
+    "outcome": "Restrict browser origins to the approved allowlist",
+    "draft": false,
+    "body": [
+      "> **SAMPLE CONTENT — EDIT ME:** This is a fictional review template, not a claim that Raider tested a real service.",
+      "## What CORS controls",
+      "Cross-Origin Resource Sharing tells browsers which web origins may read a response. It is a browser rule, not a replacement for authentication or server-side authorization. A permissive CORS response does not by itself let an unauthenticated caller bypass the API's normal access checks.",
+      "Start by writing down the application's intended browser clients: their exact schemes, hostnames, and ports. Development origins such as `http://localhost:3000` should not silently become production allowlist entries.",
+      "## Review the response",
+      "From an authorized test environment, inspect the response to a normal request and to an `OPTIONS` preflight when the browser would send one. Record the request's `Origin`, the returned `Access-Control-Allow-Origin`, whether credentials are enabled, and the allowed methods and headers.",
+      "Check that the server compares the origin against a deliberate allowlist. Avoid reflecting any supplied origin automatically. If cookies or other credentials are allowed, the origin policy needs especially careful review; browsers do not accept a wildcard origin together with credentialed access.",
+      "Also look at caching. If the server returns different CORS headers based on the request origin, the response should be varied by `Origin` so an intermediary cache does not reuse a response with the wrong policy.",
+      "## Sample findings format",
+      "| Item | Observation |\n| --- | --- |\n| Intended browser origins | Replace with approved origins |\n| Origin tested | Replace with a harmless test origin |\n| Credential mode | Record whether credentials are needed |\n| Preflight behavior | Record allowed methods and headers |\n| Cache behavior | Check whether origin-specific responses vary |",
+      "Do not include session cookies, bearer tokens, or private response bodies in screenshots or shared notes.",
+      "## Safer policy",
+      "Allow only the exact origins that need browser access, and keep the allowed methods and headers as narrow as the application permits. If a client does not need credentialed requests, leave credentials disabled. Recheck the policy after changes to the frontend host, CDN, or API gateway because those layers can add or override headers.",
+      "## Notes to replace",
+      "- Authorized scope and environment:\n- Intended origins:\n- Normal and preflight responses:\n- Risk and user impact:\n- Recommended policy and retest result:"
+    ],
+    "headings": [
+      {
+        "title": "What CORS controls",
+        "id": "what-cors-controls"
+      },
+      {
+        "title": "Review the response",
+        "id": "review-the-response"
+      },
+      {
+        "title": "Sample findings format",
+        "id": "sample-findings-format"
+      },
+      {
+        "title": "Safer policy",
+        "id": "safer-policy"
+      },
+      {
+        "title": "Notes to replace",
+        "id": "notes-to-replace"
+      }
+    ],
+    "wordCount": 378
+  },
+  {
+    "title": "Sample Note: A First Pass at Security Headers",
+    "slug": "sample-security-headers",
+    "date": "2026-10-20",
+    "summary": "Editable starter note for recording a defensive review of headers on a site you own.",
+    "tags": [
+      "sample",
+      "web",
+      "defense"
+    ],
+    "category": "note",
+    "difficulty": "easy",
+    "target": "Authorized web application",
+    "scope": "HTTP response headers",
+    "outcome": "Tune policies to the app's actual resources",
+    "draft": false,
+    "body": [
+      "> **SAMPLE CONTENT — EDIT ME:** This is a fictional checklist, not a claim that Raider assessed a real target.",
+      "## Scope",
+      "Use this outline only for a site you own or are explicitly authorized to review. Save the response headers and note the date, environment, and any proxy or CDN in front of the app.",
+      "## First pass",
+      "Check whether the application has a Content Security Policy that fits its actual resources, a frame policy that prevents unwanted embedding, and an HSTS policy after HTTPS is configured correctly.",
+      "Treat scanner output as a starting point. A policy can be present and still be too broad, or conflict with how the application loads scripts and images.",
+      "## Follow-up",
+      "Record each finding with the affected route, observed header, expected behavior, and a practical fix. Re-check the page after the change and keep the before-and-after responses with your notes.",
+      "**Replace this sample with:** your authorized test scope and findings."
+    ],
+    "headings": [
+      {
+        "title": "Scope",
+        "id": "scope"
+      },
+      {
+        "title": "First pass",
+        "id": "first-pass"
+      },
+      {
+        "title": "Follow-up",
+        "id": "follow-up"
+      }
+    ],
+    "wordCount": 157
+  },
+  {
+    "title": "Sample Lab: Reviewing Session Cookies",
+    "slug": "sample-session-cookie-review",
+    "date": "2026-10-19",
+    "summary": "An editable checklist for checking browser session-cookie settings and lifecycle behavior.",
+    "tags": [
+      "sample",
+      "web",
+      "sessions",
+      "defense"
+    ],
+    "category": "lab",
+    "difficulty": "easy",
+    "target": "Local test application",
+    "scope": "Test account and session flow",
+    "outcome": "Document cookie flags and session invalidation",
+    "draft": false,
+    "body": [
+      "> **SAMPLE CONTENT — EDIT ME:** Use this fictional checklist only in a local lab or an application you are authorized to review.",
+      "## Scope and setup",
+      "Create a test account with no real personal information, sign in through the normal application flow, and inspect the cookies set by the application in the browser's storage panel. Record the environment and date, but redact cookie values from notes and screenshots.",
+      "The review has two parts: the browser-facing cookie attributes and the server's session lifecycle. A cookie can have strong flags and still point to a session that never expires or is not rotated after a privilege change.",
+      "## Cookie attributes",
+      "- **Secure:** Send the session cookie only over HTTPS in production.\n- **HttpOnly:** Keep scripts from reading the session cookie when ordinary JavaScript access is not needed.\n- **SameSite:** Choose `Lax`, `Strict`, or `None` based on the application's cross-site flows. `None` requires `Secure` in modern browsers.\n- **Path and Domain:** Limit scope to the hosts and routes that need the session. Avoid a parent-domain cookie unless subdomains genuinely share it.\n- **Lifetime:** Prefer a deliberate expiry policy over an unnecessarily long-lived session.",
+      "These settings should match the app's sign-in, federation, and embedded-flow requirements. Do not copy a generic cookie string without understanding those flows.",
+      "## Lifecycle checks",
+      "In the test account, confirm that a new authenticated session is issued after sign-in and after a privilege change. Sign out, then verify that the old session no longer grants access through the application's normal interface. If the product supports password changes or account recovery, document how those actions affect existing sessions.",
+      "Keep the test focused on your own account and lab. Never replay another person's session token or place a live token in a report.",
+      "## Sample notes",
+      "| Check | Result |\n| --- | --- |\n| Cookie attributes | Replace with observed flags; omit values |\n| HTTPS behavior | Replace with the authorized test result |\n| Session rotation | Note the events that issue a new session |\n| Sign-out behavior | Record the expected and observed result |\n| Remaining sessions | Document the product's policy |",
+      "## Improvements",
+      "Set cookie attributes at the server, rotate session identifiers at authentication boundaries, and invalidate sessions on the events defined by the product's threat model. Add automated checks for the intended cookie flags and for sign-out behavior so configuration drift is easier to catch."
+    ],
+    "headings": [
+      {
+        "title": "Scope and setup",
+        "id": "scope-and-setup"
+      },
+      {
+        "title": "Cookie attributes",
+        "id": "cookie-attributes"
+      },
+      {
+        "title": "Lifecycle checks",
+        "id": "lifecycle-checks"
+      },
+      {
+        "title": "Sample notes",
+        "id": "sample-notes"
+      },
+      {
+        "title": "Improvements",
+        "id": "improvements"
+      }
+    ],
+    "wordCount": 403
+  },
+  {
     "title": "JWT key confusion in a small API",
     "slug": "jwt-key-confusion",
     "date": "2026-08-14",
     "summary": "How an algorithm mismatch turned a harmless token check into account access.",
     "tags": [
+      "sample",
       "web",
       "jwt",
       "api"
     ],
     "category": "lab",
     "difficulty": "medium",
+    "target": "Fictional JWT verifier",
+    "scope": "Local training API",
+    "outcome": "Sample remediation: pin the algorithm and trusted key",
     "draft": false,
     "body": [
       "## Overview",
-      "A compact lab about reading the verification path before reaching for a payload.",
+      "> **EDITABLE SAMPLE LAB:** The scenario and observations below are a fictional training draft. Replace them with evidence from your own lab before describing this as a real assessment.",
+      "A JWT is not trusted because it can be decoded. The receiver has to verify its signature using the issuer's expected key and an algorithm that the application has chosen in advance.",
+      "This lab focuses on an algorithm-confusion mistake: the verifier treats the token's `alg` header as a command and allows the same key material to be interpreted under more than one algorithm family. In a vulnerable configuration, a public verification key can be used in an unintended way. The core defense is to bind each trusted key to one expected algorithm and reject tokens that do not match it. RFC 8725 recommends explicit algorithm verification and using each key with exactly one algorithm ([section 3.1](https://www.rfc-editor.org/rfc/rfc8725.html#section-3.1)).",
       "<Callout type=\"note\">Always pin the accepted signing algorithm in server configuration.</Callout>",
-      "```ts\nconst verified = verify(token, publicKey, { algorithms: [\"RS256\"] });\n```",
-      "The useful clue was the branch that selected the verification key.",
+      "```ts\nconst verified = verify(token, publicKey, {\n  algorithms: [\"RS256\"],\n  issuer: \"https://issuer.example.test\",\n  audience: \"raider-api\",\n});\n```",
+      "The allowlist belongs to trusted server configuration. It must not be expanded or selected from unverified token data.",
       "## Investigation",
-      "![The watcher identity artwork](/brand/identity-original.jpg)",
+      "Start at the code that consumes the token, then follow the complete verification path:",
+      "1. Find the library call that checks the signature. A decode-only call is not verification.\n2. Record the configured algorithms and the key source. Confirm that each key is intended for one algorithm.\n3. Trace how the application selects a key. Values such as `alg` and `kid` come from the unverified header and need constrained handling.\n4. Check the claims the application relies on: issuer, audience, expiry, and any application-specific token type.\n5. Follow the verified claims to the authorization decision. A valid signature does not by itself mean the token is meant for this API or action.",
+      "Keep the exercise local. Use the test issuer and test accounts supplied by the lab; do not use real signing keys or tokens from another service.",
+      "## Safe validation matrix",
+      "| Case | Expected behavior |\n| --- | --- |\n| Correct signature and expected algorithm | Accept, then apply normal authorization |\n| Unsupported or unexpected algorithm | Reject before using token claims |\n| Missing or invalid signature | Reject |\n| Wrong issuer or audience | Reject |\n| Expired token | Reject |\n| Unknown key identifier | Fail closed without fetching an arbitrary URL |",
+      "Capture the test case and result, not secret token values. If a screenshot is needed, redact the token completely.",
+      "## Sample root cause and fix",
+      "In this fictional lab, the verifier's options were too broad and key selection followed data from the incoming header. The fix was to configure the expected algorithm at the verification call, use the matching public key from a trusted issuer configuration, and validate issuer and audience before the claims were used.",
+      "Add regression tests for both valid and rejected cases. Keep signing and verification keys separate from application data, rotate them through a controlled key set, and avoid trusting token-supplied key URLs.",
       "## Takeaways",
-      "Pin allowed algorithms and test rejection paths as well as valid tokens."
+      "Pin the algorithm and its key together. Validate the claims that define the token's intended use, and test failure paths as carefully as the successful request."
     ],
     "headings": [
       {
@@ -33,11 +308,19 @@
         "id": "investigation"
       },
       {
+        "title": "Safe validation matrix",
+        "id": "safe-validation-matrix"
+      },
+      {
+        "title": "Sample root cause and fix",
+        "id": "sample-root-cause-and-fix"
+      },
+      {
         "title": "Takeaways",
         "id": "takeaways"
       }
     ],
-    "wordCount": 57
+    "wordCount": 527
   },
   {
     "title": "Cache me if you can",
@@ -55,10 +338,20 @@
     "draft": false,
     "body": [
       "## Overview",
-      "This challenge was a reminder that caches have their own idea of identity.",
-      "I compared requests through the proxy and saw that a response generated for one host could be replayed for another.",
+      "This challenge was a reminder that caches have their own idea of identity. The application may generate a response from several request inputs, while the cache may use only a subset of them to decide whether a stored response can be reused.",
+      "I compared requests through the challenge proxy and saw that a response generated for one host could be replayed for another. The useful question was not simply “is this response cached?” but “which request fields distinguish one representation from another?”",
+      "## Investigation",
+      "I compared the same harmless route while changing one input at a time. For each request, I recorded the host, path, relevant headers, response body, and cache indicators returned by the challenge environment. That made it easier to separate an application behavior from a proxy behavior.",
+      "The host mattered to the generated response, but the observed cache behavior suggested it was not represented consistently in the cache key. When two requests that should describe different content are treated as the same cache entry, a stored response can cross the boundary between those contexts.",
+      "For a real review, keep the test on systems you own or are authorized to assess. Use non-sensitive content and a controlled hostname; do not try to place private data into a shared cache.",
+      "## What to record",
+      "- Which request fields change the response?\n- Which fields are included in the cache key?\n- Does the response declare relevant `Vary` behavior?\n- Do the application, reverse proxy, and CDN agree about the canonical host?\n- Are personalized or authenticated responses excluded from shared caching?",
+      "Cache status headers can help with diagnosis, but they are not proof by themselves. Compare the response content and the behavior after a controlled cache miss and hit.",
+      "## Safer design",
+      "Build the cache key from every input that changes the representation, including a validated canonical host when host affects the response. Avoid deriving links or redirects from an untrusted host header. Mark user-specific responses private or non-cacheable unless the cache has a deliberate, tested partitioning strategy.",
+      "After changing the key or cache policy, purge old entries and retest both the expected cache hit and the isolation between distinct hosts and users.",
       "## Takeaways",
-      "Keep cache keys aligned with every input that changes the response."
+      "Keep cache identity aligned with response identity. A cache is part of the application's security boundary, so test the proxy and origin together rather than inspecting either layer alone."
     ],
     "headings": [
       {
@@ -66,11 +359,23 @@
         "id": "overview"
       },
       {
+        "title": "Investigation",
+        "id": "investigation"
+      },
+      {
+        "title": "What to record",
+        "id": "what-to-record"
+      },
+      {
+        "title": "Safer design",
+        "id": "safer-design"
+      },
+      {
         "title": "Takeaways",
         "id": "takeaways"
       }
     ],
-    "wordCount": 46
+    "wordCount": 390
   },
   {
     "title": "Notes on Linux capabilities",
@@ -86,10 +391,21 @@
     "draft": false,
     "body": [
       "## Overview",
-      "Capabilities split traditional root privileges into smaller permissions. During an assessment, inventory both file capabilities and the capabilities held by running processes.",
-      "Use `getcap` to find file capabilities, then check whether the binary can be influenced through arguments, environment, or writable paths.",
+      "Linux capabilities split some traditional root privileges into smaller permissions. A process can therefore have a meaningful privilege even when its UID is not zero. During an assessment, inventory both capabilities attached to executable files and capabilities held by running processes.",
+      "The presence of a capability is a clue, not a complete finding. Its practical impact depends on which program receives it, how that program is invoked, the account and service context, and whether its inputs or files can be influenced.",
+      "## First pass",
+      "For a file you are authorized to inspect, `getcap` shows any file capabilities:",
+      "```sh\ngetcap /path/to/program\n```",
+      "For a running process, inspect its status in `/proc/<pid>/status` and note the capability sets alongside its UID, groups, executable, and service configuration. Keep the process context with the result; a capability name without that context can be misleading.",
+      "Pay particular attention to how the process is started and what it can reach. Review ownership and write permissions on the executable, its parent directories, configuration files, plugins, and any paths used at runtime. Record environment variables and arguments only when they are relevant to the service and do not expose secrets in a report.",
+      "## Triage questions",
+      "1. Is the capability required for the service's documented job?\n2. Is it attached to a single, maintained executable or inherited by a broader process tree?\n3. Can an untrusted user influence the program's input, configuration, or writable paths?\n4. Does the service run with additional groups or access to sensitive files?\n5. Is the capability present in the active deployment, or only in an unused image or package?",
+      "These checks help distinguish an unnecessary permission from one that has a realistic path to impact. Validate conclusions in a lab or an approved assessment environment.",
+      "## Reducing exposure",
+      "Remove capabilities that the service does not need, then restart or redeploy the process so the running state matches the intended configuration. Where a capability is necessary, isolate the service, limit its filesystem access, and keep its executable and configuration writable only by trusted administrators.",
+      "Add a configuration check to deployment review so package updates or image rebuilds do not silently restore excess capabilities.",
       "## Takeaways",
-      "Trace the process context and inputs before treating a capability as exploitable."
+      "Trace the process context and inputs before treating a capability as exploitable. Document the exact file or process, the capability set, the service purpose, and the reason the permission is necessary or excessive."
     ],
     "headings": [
       {
@@ -97,10 +413,22 @@
         "id": "overview"
       },
       {
+        "title": "First pass",
+        "id": "first-pass"
+      },
+      {
+        "title": "Triage questions",
+        "id": "triage-questions"
+      },
+      {
+        "title": "Reducing exposure",
+        "id": "reducing-exposure"
+      },
+      {
         "title": "Takeaways",
         "id": "takeaways"
       }
     ],
-    "wordCount": 56
+    "wordCount": 388
   }
 ]

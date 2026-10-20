@@ -3,28 +3,66 @@ title: "JWT key confusion in a small API"
 slug: "jwt-key-confusion"
 date: 2026-08-14
 summary: "How an algorithm mismatch turned a harmless token check into account access."
-tags: ["web", "jwt", "api"]
+tags: ["sample", "web", "jwt", "api"]
 category: "lab"
 difficulty: "medium"
+target: "Fictional JWT verifier"
+scope: "Local training API"
+outcome: "Sample remediation: pin the algorithm and trusted key"
 draft: false
 ---
 
 ## Overview
 
-A compact lab about reading the verification path before reaching for a payload.
+> **EDITABLE SAMPLE LAB:** The scenario and observations below are a fictional training draft. Replace them with evidence from your own lab before describing this as a real assessment.
+
+A JWT is not trusted because it can be decoded. The receiver has to verify its signature using the issuer's expected key and an algorithm that the application has chosen in advance.
+
+This lab focuses on an algorithm-confusion mistake: the verifier treats the token's `alg` header as a command and allows the same key material to be interpreted under more than one algorithm family. In a vulnerable configuration, a public verification key can be used in an unintended way. The core defense is to bind each trusted key to one expected algorithm and reject tokens that do not match it. RFC 8725 recommends explicit algorithm verification and using each key with exactly one algorithm ([section 3.1](https://www.rfc-editor.org/rfc/rfc8725.html#section-3.1)).
 
 <Callout type="note">Always pin the accepted signing algorithm in server configuration.</Callout>
 
 ```ts
-const verified = verify(token, publicKey, { algorithms: ["RS256"] });
+const verified = verify(token, publicKey, {
+  algorithms: ["RS256"],
+  issuer: "https://issuer.example.test",
+  audience: "raider-api",
+});
 ```
 
-The useful clue was the branch that selected the verification key.
+The allowlist belongs to trusted server configuration. It must not be expanded or selected from unverified token data.
 
 ## Investigation
 
-![The watcher identity artwork](/brand/identity-original.jpg)
+Start at the code that consumes the token, then follow the complete verification path:
+
+1. Find the library call that checks the signature. A decode-only call is not verification.
+2. Record the configured algorithms and the key source. Confirm that each key is intended for one algorithm.
+3. Trace how the application selects a key. Values such as `alg` and `kid` come from the unverified header and need constrained handling.
+4. Check the claims the application relies on: issuer, audience, expiry, and any application-specific token type.
+5. Follow the verified claims to the authorization decision. A valid signature does not by itself mean the token is meant for this API or action.
+
+Keep the exercise local. Use the test issuer and test accounts supplied by the lab; do not use real signing keys or tokens from another service.
+
+## Safe validation matrix
+
+| Case | Expected behavior |
+| --- | --- |
+| Correct signature and expected algorithm | Accept, then apply normal authorization |
+| Unsupported or unexpected algorithm | Reject before using token claims |
+| Missing or invalid signature | Reject |
+| Wrong issuer or audience | Reject |
+| Expired token | Reject |
+| Unknown key identifier | Fail closed without fetching an arbitrary URL |
+
+Capture the test case and result, not secret token values. If a screenshot is needed, redact the token completely.
+
+## Sample root cause and fix
+
+In this fictional lab, the verifier's options were too broad and key selection followed data from the incoming header. The fix was to configure the expected algorithm at the verification call, use the matching public key from a trusted issuer configuration, and validate issuer and audience before the claims were used.
+
+Add regression tests for both valid and rejected cases. Keep signing and verification keys separate from application data, rotate them through a controlled key set, and avoid trusting token-supplied key URLs.
 
 ## Takeaways
 
-Pin allowed algorithms and test rejection paths as well as valid tokens.
+Pin the algorithm and its key together. Validate the claims that define the token's intended use, and test failure paths as carefully as the successful request.

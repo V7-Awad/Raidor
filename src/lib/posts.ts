@@ -11,6 +11,9 @@ export type Post = {
   event?: string;
   difficulty?: "easy" | "medium" | "hard";
   cover?: string;
+  target?: string;
+  scope?: string;
+  outcome?: string;
   body: string[];
   headings: { title: string; id: string }[];
   wordCount: number;

@@ -1,0 +1,54 @@
+---
+title: "Sample Lab: Checking Record Ownership"
+slug: "sample-access-control-review"
+date: 2026-10-21
+summary: "An editable local exercise for checking that an API enforces ownership on every record request."
+tags: ["sample", "api", "access-control", "defense"]
+category: "lab"
+difficulty: "medium"
+target: "Local demo API"
+scope: "Two seeded test accounts"
+outcome: "Enforce record ownership on every operation"
+draft: false
+---
+
+> **SAMPLE CONTENT — EDIT ME:** This fictional exercise uses a local demo API and two test accounts. Replace it with your own authorized lab notes before presenting it as your work.
+
+## Scenario
+
+The demo application stores a private note for each account. A signed-in user can open a note through a route such as `/api/notes/{noteId}`. The lab is seeded with Account A and Account B, each with one note that contains harmless test text.
+
+The question is whether the server checks that the requested note belongs to the current account. Knowing or changing an identifier should never grant access by itself.
+
+## Test plan
+
+Use only the two accounts supplied by the local lab. Record the expected result before each request so the review has a clear pass/fail condition.
+
+| Session | Note requested | Expected result |
+| --- | --- | --- |
+| Account A | A's own note | Allowed |
+| Account A | B's note | Denied without returning note data |
+| Account B | B's own note | Allowed |
+| Signed out | Any private note | Authentication required |
+
+Repeat the ownership checks for every operation that reads or changes a note. A route that protects `GET` but forgets the same check on `PATCH` or `DELETE` still has an access-control gap.
+
+## Sample observation
+
+In this fictional run, the UI hid the other account's note, but the API returned it when the test account requested its seeded identifier directly. That points to a server-side authorization issue; hiding a link in the interface is not an access check.
+
+Keep evidence minimal: the test account used, route, status code, and whether any other account's data appeared. Do not copy real personal data into a report.
+
+## Remediation
+
+Apply authorization where the data is loaded. A query should be scoped to both the record identifier and the authenticated account, or the handler should perform an equivalent ownership check before returning or changing anything. Return a consistent denial response when the record is missing or belongs to somebody else, according to the application's privacy requirements.
+
+Add regression cases for the full matrix above. Include nested resources and bulk operations, since authorization can be missed when an endpoint accepts a list of IDs.
+
+## Notes to replace
+
+- Lab and application version:
+- Accounts and test records used:
+- Routes and methods reviewed:
+- Expected versus observed results:
+- Fix and regression checks:

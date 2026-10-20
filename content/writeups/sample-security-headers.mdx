@@ -1,0 +1,31 @@
+---
+title: "Sample Note: A First Pass at Security Headers"
+slug: "sample-security-headers"
+date: 2026-10-20
+summary: "Editable starter note for recording a defensive review of headers on a site you own."
+tags: ["sample", "web", "defense"]
+category: "note"
+difficulty: "easy"
+target: "Authorized web application"
+scope: "HTTP response headers"
+outcome: "Tune policies to the app's actual resources"
+draft: false
+---
+
+> **SAMPLE CONTENT — EDIT ME:** This is a fictional checklist, not a claim that Raider assessed a real target.
+
+## Scope
+
+Use this outline only for a site you own or are explicitly authorized to review. Save the response headers and note the date, environment, and any proxy or CDN in front of the app.
+
+## First pass
+
+Check whether the application has a Content Security Policy that fits its actual resources, a frame policy that prevents unwanted embedding, and an HSTS policy after HTTPS is configured correctly.
+
+Treat scanner output as a starting point. A policy can be present and still be too broad, or conflict with how the application loads scripts and images.
+
+## Follow-up
+
+Record each finding with the affected route, observed header, expected behavior, and a practical fix. Re-check the page after the change and keep the before-and-after responses with your notes.
+
+**Replace this sample with:** your authorized test scope and findings.

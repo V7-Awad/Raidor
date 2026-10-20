@@ -10,10 +10,38 @@ draft: false
 
 ## Overview
 
-Capabilities split traditional root privileges into smaller permissions. During an assessment, inventory both file capabilities and the capabilities held by running processes.
+Linux capabilities split some traditional root privileges into smaller permissions. A process can therefore have a meaningful privilege even when its UID is not zero. During an assessment, inventory both capabilities attached to executable files and capabilities held by running processes.
 
-Use `getcap` to find file capabilities, then check whether the binary can be influenced through arguments, environment, or writable paths.
+The presence of a capability is a clue, not a complete finding. Its practical impact depends on which program receives it, how that program is invoked, the account and service context, and whether its inputs or files can be influenced.
+
+## First pass
+
+For a file you are authorized to inspect, `getcap` shows any file capabilities:
+
+```sh
+getcap /path/to/program
+```
+
+For a running process, inspect its status in `/proc/<pid>/status` and note the capability sets alongside its UID, groups, executable, and service configuration. Keep the process context with the result; a capability name without that context can be misleading.
+
+Pay particular attention to how the process is started and what it can reach. Review ownership and write permissions on the executable, its parent directories, configuration files, plugins, and any paths used at runtime. Record environment variables and arguments only when they are relevant to the service and do not expose secrets in a report.
+
+## Triage questions
+
+1. Is the capability required for the service's documented job?
+2. Is it attached to a single, maintained executable or inherited by a broader process tree?
+3. Can an untrusted user influence the program's input, configuration, or writable paths?
+4. Does the service run with additional groups or access to sensitive files?
+5. Is the capability present in the active deployment, or only in an unused image or package?
+
+These checks help distinguish an unnecessary permission from one that has a realistic path to impact. Validate conclusions in a lab or an approved assessment environment.
+
+## Reducing exposure
+
+Remove capabilities that the service does not need, then restart or redeploy the process so the running state matches the intended configuration. Where a capability is necessary, isolate the service, limit its filesystem access, and keep its executable and configuration writable only by trusted administrators.
+
+Add a configuration check to deployment review so package updates or image rebuilds do not silently restore excess capabilities.
 
 ## Takeaways
 
-Trace the process context and inputs before treating a capability as exploitable.
+Trace the process context and inputs before treating a capability as exploitable. Document the exact file or process, the capability set, the service purpose, and the reason the permission is necessary or excessive.

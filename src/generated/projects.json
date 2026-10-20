@@ -9,7 +9,21 @@
     ],
     "links": [],
     "status": "ongoing",
-    "cover": ""
+    "cover": "",
+    "slug": "ctf-field-notes"
+  },
+  {
+    "title": "Header Lantern — Sample Project",
+    "summary": "Placeholder concept for a small report that reviews defensive HTTP headers on an authorized site. Replace this text with the real scope and current state.",
+    "stack": [
+      "TypeScript",
+      "Node.js",
+      "Security headers"
+    ],
+    "links": [],
+    "status": "SAMPLE — EDIT ME",
+    "cover": "",
+    "slug": "header-lantern"
   },
   {
     "title": "Linux Lab Toolkit",
@@ -20,7 +34,21 @@
       "Linux"
     ],
     "links": [],
-    "status": "in progress",
-    "cover": ""
+    "status": "SAMPLE — EDIT ME",
+    "cover": "",
+    "slug": "linux-lab-toolkit"
+  },
+  {
+    "title": "Pocket Lab Journal — Sample Project",
+    "summary": "Placeholder concept for organizing lab observations, commands, and remediation notes. Replace it with a project you have actually built.",
+    "stack": [
+      "Next.js",
+      "MDX",
+      "SQLite"
+    ],
+    "links": [],
+    "status": "SAMPLE — EDIT ME",
+    "cover": "",
+    "slug": "pocket-lab-journal"
   }
 ]

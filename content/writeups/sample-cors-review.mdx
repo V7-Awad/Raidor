@@ -1,0 +1,53 @@
+---
+title: "Sample Note: Reviewing a CORS Policy"
+slug: "sample-cors-review"
+date: 2026-10-20
+summary: "A practical checklist for documenting cross-origin response rules on an application you own."
+tags: ["sample", "web", "cors", "defense"]
+category: "note"
+difficulty: "easy"
+target: "Owned demo API"
+scope: "Browser-facing CORS policy"
+outcome: "Restrict browser origins to the approved allowlist"
+draft: false
+---
+
+> **SAMPLE CONTENT — EDIT ME:** This is a fictional review template, not a claim that Raider tested a real service.
+
+## What CORS controls
+
+Cross-Origin Resource Sharing tells browsers which web origins may read a response. It is a browser rule, not a replacement for authentication or server-side authorization. A permissive CORS response does not by itself let an unauthenticated caller bypass the API's normal access checks.
+
+Start by writing down the application's intended browser clients: their exact schemes, hostnames, and ports. Development origins such as `http://localhost:3000` should not silently become production allowlist entries.
+
+## Review the response
+
+From an authorized test environment, inspect the response to a normal request and to an `OPTIONS` preflight when the browser would send one. Record the request's `Origin`, the returned `Access-Control-Allow-Origin`, whether credentials are enabled, and the allowed methods and headers.
+
+Check that the server compares the origin against a deliberate allowlist. Avoid reflecting any supplied origin automatically. If cookies or other credentials are allowed, the origin policy needs especially careful review; browsers do not accept a wildcard origin together with credentialed access.
+
+Also look at caching. If the server returns different CORS headers based on the request origin, the response should be varied by `Origin` so an intermediary cache does not reuse a response with the wrong policy.
+
+## Sample findings format
+
+| Item | Observation |
+| --- | --- |
+| Intended browser origins | Replace with approved origins |
+| Origin tested | Replace with a harmless test origin |
+| Credential mode | Record whether credentials are needed |
+| Preflight behavior | Record allowed methods and headers |
+| Cache behavior | Check whether origin-specific responses vary |
+
+Do not include session cookies, bearer tokens, or private response bodies in screenshots or shared notes.
+
+## Safer policy
+
+Allow only the exact origins that need browser access, and keep the allowed methods and headers as narrow as the application permits. If a client does not need credentialed requests, leave credentials disabled. Recheck the policy after changes to the frontend host, CDN, or API gateway because those layers can add or override headers.
+
+## Notes to replace
+
+- Authorized scope and environment:
+- Intended origins:
+- Normal and preflight responses:
+- Risk and user impact:
+- Recommended policy and retest result:

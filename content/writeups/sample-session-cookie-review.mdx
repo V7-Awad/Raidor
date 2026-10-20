@@ -1,0 +1,51 @@
+---
+title: "Sample Lab: Reviewing Session Cookies"
+slug: "sample-session-cookie-review"
+date: 2026-10-19
+summary: "An editable checklist for checking browser session-cookie settings and lifecycle behavior."
+tags: ["sample", "web", "sessions", "defense"]
+category: "lab"
+difficulty: "easy"
+target: "Local test application"
+scope: "Test account and session flow"
+outcome: "Document cookie flags and session invalidation"
+draft: false
+---
+
+> **SAMPLE CONTENT — EDIT ME:** Use this fictional checklist only in a local lab or an application you are authorized to review.
+
+## Scope and setup
+
+Create a test account with no real personal information, sign in through the normal application flow, and inspect the cookies set by the application in the browser's storage panel. Record the environment and date, but redact cookie values from notes and screenshots.
+
+The review has two parts: the browser-facing cookie attributes and the server's session lifecycle. A cookie can have strong flags and still point to a session that never expires or is not rotated after a privilege change.
+
+## Cookie attributes
+
+- **Secure:** Send the session cookie only over HTTPS in production.
+- **HttpOnly:** Keep scripts from reading the session cookie when ordinary JavaScript access is not needed.
+- **SameSite:** Choose `Lax`, `Strict`, or `None` based on the application's cross-site flows. `None` requires `Secure` in modern browsers.
+- **Path and Domain:** Limit scope to the hosts and routes that need the session. Avoid a parent-domain cookie unless subdomains genuinely share it.
+- **Lifetime:** Prefer a deliberate expiry policy over an unnecessarily long-lived session.
+
+These settings should match the app's sign-in, federation, and embedded-flow requirements. Do not copy a generic cookie string without understanding those flows.
+
+## Lifecycle checks
+
+In the test account, confirm that a new authenticated session is issued after sign-in and after a privilege change. Sign out, then verify that the old session no longer grants access through the application's normal interface. If the product supports password changes or account recovery, document how those actions affect existing sessions.
+
+Keep the test focused on your own account and lab. Never replay another person's session token or place a live token in a report.
+
+## Sample notes
+
+| Check | Result |
+| --- | --- |
+| Cookie attributes | Replace with observed flags; omit values |
+| HTTPS behavior | Replace with the authorized test result |
+| Session rotation | Note the events that issue a new session |
+| Sign-out behavior | Record the expected and observed result |
+| Remaining sessions | Document the product's policy |
+
+## Improvements
+
+Set cookie attributes at the server, rotate session identifiers at authentication boundaries, and invalidate sessions on the events defined by the product's threat model. Add automated checks for the intended cookie flags and for sign-out behavior so configuration drift is easier to catch.

@@ -1,0 +1,33 @@
+---
+title: "Sample Lab: Following an Untrusted Redirect"
+slug: "sample-redirect-lab"
+date: 2026-10-21
+summary: "Editable practice write-up about tracing a redirect in a deliberately local demo app."
+tags: ["sample", "web", "lab"]
+category: "lab"
+difficulty: "easy"
+target: "Local demo app"
+scope: "Login redirect handling"
+outcome: "Allow only approved internal destinations"
+draft: false
+---
+
+> **SAMPLE CONTENT — EDIT ME:** This is a fictional training example. Replace it with your own notes before presenting it as your work.
+
+## Scenario
+
+A local demo page accepts a `next` value after sign-in. In this sample, the value is passed straight to a redirect response, so the browser can be sent to a destination outside the demo app.
+
+Keep the exercise on a local or intentionally vulnerable training app. Use a harmless value such as `https://example.test/finish` to observe the redirect.
+
+## What to inspect
+
+Follow the request in the browser network panel. Note which route reads `next`, how the server builds the `Location` response header, and whether the destination is checked against an allowlist.
+
+For a safe default, accept only known internal paths or map short destination IDs to approved URLs. Reject malformed values instead of trying to repair them.
+
+## Takeaways
+
+Redirect destinations are input. Validate them at the server boundary, and add tests for absolute URLs, protocol-relative URLs, and ordinary internal paths.
+
+**Replace this section with:** your lab setup, observations, screenshots, and remediation notes.

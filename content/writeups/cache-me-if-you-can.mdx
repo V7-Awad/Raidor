@@ -12,10 +12,34 @@ draft: false
 
 ## Overview
 
-This challenge was a reminder that caches have their own idea of identity.
+This challenge was a reminder that caches have their own idea of identity. The application may generate a response from several request inputs, while the cache may use only a subset of them to decide whether a stored response can be reused.
 
-I compared requests through the proxy and saw that a response generated for one host could be replayed for another.
+I compared requests through the challenge proxy and saw that a response generated for one host could be replayed for another. The useful question was not simply “is this response cached?” but “which request fields distinguish one representation from another?”
+
+## Investigation
+
+I compared the same harmless route while changing one input at a time. For each request, I recorded the host, path, relevant headers, response body, and cache indicators returned by the challenge environment. That made it easier to separate an application behavior from a proxy behavior.
+
+The host mattered to the generated response, but the observed cache behavior suggested it was not represented consistently in the cache key. When two requests that should describe different content are treated as the same cache entry, a stored response can cross the boundary between those contexts.
+
+For a real review, keep the test on systems you own or are authorized to assess. Use non-sensitive content and a controlled hostname; do not try to place private data into a shared cache.
+
+## What to record
+
+- Which request fields change the response?
+- Which fields are included in the cache key?
+- Does the response declare relevant `Vary` behavior?
+- Do the application, reverse proxy, and CDN agree about the canonical host?
+- Are personalized or authenticated responses excluded from shared caching?
+
+Cache status headers can help with diagnosis, but they are not proof by themselves. Compare the response content and the behavior after a controlled cache miss and hit.
+
+## Safer design
+
+Build the cache key from every input that changes the representation, including a validated canonical host when host affects the response. Avoid deriving links or redirects from an untrusted host header. Mark user-specific responses private or non-cacheable unless the cache has a deliberate, tested partitioning strategy.
+
+After changing the key or cache policy, purge old entries and retest both the expected cache hit and the isolation between distinct hosts and users.
 
 ## Takeaways
 
-Keep cache keys aligned with every input that changes the response.
+Keep cache identity aligned with response identity. A cache is part of the application's security boundary, so test the proxy and origin together rather than inspecting either layer alone.

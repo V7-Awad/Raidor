@@ -9,7 +9,8 @@ const schema = z.object({
   date: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.date()]), summary: z.string().min(1), tags: z.array(z.string()),
   category: z.enum(["ctf", "lab", "research", "note"]),
   updated: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.date()]).optional(), event: z.string().optional(),
-  difficulty: z.enum(["easy", "medium", "hard"]).optional(), cover: z.string().optional(), draft: z.boolean().default(false),
+  difficulty: z.enum(["easy", "medium", "hard"]).optional(), cover: z.string().optional(),
+  target: z.string().optional(), scope: z.string().optional(), outcome: z.string().optional(), draft: z.boolean().default(false),
 });
 const projectSchema = z.object({ title: z.string().min(1), summary: z.string().min(1), stack: z.array(z.string()), links: z.array(z.string()).default([]), status: z.string().min(1), cover: z.string().optional() });
 const iso = (value) => value instanceof Date ? value.toISOString().slice(0, 10) : value;
@@ -34,7 +35,7 @@ for (const file of projectFiles) {
   const parsed = matter(await readFile(path.join(root, "content/projects", file), "utf8"));
   const project = projectSchema.safeParse(parsed.data);
   if (!project.success) throw new Error(`Invalid frontmatter in content/projects/${file}: ${project.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; ")}`);
-  projects.push(project.data);
+  projects.push({ ...project.data, slug: file.replace(/\.mdx$/, "") });
 }
 await import("node:fs/promises").then(({ mkdir }) => mkdir(path.join(root, "src/generated"), { recursive: true }));
 await writeFile(path.join(root, "src/generated/posts.json"), `${JSON.stringify(posts, null, 2)}\n`);

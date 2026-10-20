@@ -7,4 +7,19 @@ status: "ongoing"
 cover: ""
 ---
 
-An evolving collection of security notes.
+This project is the notes collection behind the Raider site. Each article is an MDX file, so a challenge can include readable prose, code blocks, links, and screenshots in one place.
+
+## What belongs in a note
+
+- Challenge name, platform, category, and difficulty.
+- The clue that changed the direction of the investigation.
+- A concise sequence of steps, with the reasoning behind them.
+- The final lesson, useful references, and any defensive takeaway.
+
+## Current structure
+
+Write-ups live under `content/writeups/`. The content builder checks their front matter, creates the archive data, and refreshes the search index. The archive can filter by type, difficulty, and topic, while a write-up page presents a case file and links into its sections.
+
+## Next steps
+
+Replace sample posts with completed challenge notes, add links to the original challenge when its rules allow it, and attach screenshots only after removing tokens, flags, and account data that should stay private.
