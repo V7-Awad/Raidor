@@ -73,7 +73,7 @@ export function Terminal() {
 
   return <>
     <button className="terminal-launcher" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
-      <span className="terminal-led"/>TERMINAL <kbd>`</kbd>
+      <span className="terminal-led"/>TERMINAL
     </button>
     {open && <div className="terminal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
       <section className="terminal-window" role="dialog" aria-modal="true" aria-label="Raider site terminal">

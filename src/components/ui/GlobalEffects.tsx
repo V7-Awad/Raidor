@@ -5,9 +5,13 @@ export function GlobalEffects() {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     try {
-      if (sessionStorage.getItem("raider-seen")) return;
       const start = window.requestAnimationFrame(() => setShow(true));
-      const interval = window.setInterval(() => setProgress((value) => Math.min(94, value + Math.ceil(Math.random() * 8))), 55);
+      const startedAt = Date.now();
+      const duration = 900;
+      const interval = window.setInterval(() => {
+        const elapsed = Date.now() - startedAt;
+        setProgress(Math.min(94, Math.round((elapsed / duration) * 94)));
+      }, 100);
       let finish: number | undefined;
       let complete: number | undefined;
       const hide = () => {
@@ -15,27 +19,20 @@ export function GlobalEffects() {
         if (complete) window.clearTimeout(complete);
         if (finish) window.clearTimeout(finish);
         setShow(false);
-        sessionStorage.setItem("raider-seen", "1");
       };
       complete = window.setTimeout(() => {
         window.clearInterval(interval);
         setProgress(100);
-        finish = window.setTimeout(hide, 420);
-      }, 1500);
-      const skip = () => hide();
-      window.addEventListener("keydown", skip, { once: true });
-      window.addEventListener("pointerdown", skip, { once: true });
+        finish = window.setTimeout(hide, 600);
+      }, duration);
       return () => {
         cancelAnimationFrame(start);
         clearInterval(interval);
         if (complete) clearTimeout(complete);
-        clearTimeout(complete);
         if (finish) clearTimeout(finish);
-        window.removeEventListener("keydown", skip);
-        window.removeEventListener("pointerdown", skip);
       };
     } catch { /* storage can be unavailable */ }
-  // The intro is a one-time session animation.
+  // Show the intro on each full page load.
   }, []);
 
   useEffect(() => {
